@@ -1,5 +1,5 @@
 # microgradPort
  Port of Andrej Karpathy's micrograd to c++ for personal use
- *Ongoing
  
- Implementation of the out variable and its usage in backwards passing slightly changed due to language limitations(from what i am aware of)
+Implementation of the out variable and its usage in backwards passing slightly changed due to language limitations(from what i am aware of)
+
