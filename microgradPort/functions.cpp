@@ -84,7 +84,6 @@ Value* minus (Value* a, float b) {
 Value* pow(Value* a, int b) {
 	float d = pow(a->data, b);
 
-//	Value* v = new Value(std::make_pair<Value*, Value*>(nullptr, nullptr), b);
 	std::pair<Value*, Value*> t(a, nullptr);
 		
 	Value* out = new Value(t, d);
@@ -143,4 +142,10 @@ Value* loss(std::vector<float>& desired, std::vector<Value*> ypred) {
 		r = add(r, pow(minus(ypred[i], desired[i]), 2));
 	}
 	return r;
+}
+
+
+void del(Value*a) {
+	delete(a);
+	a = nullptr;
 }

@@ -4,42 +4,74 @@
 
 int main() {
 
-	MLP nn(3, std::vector<float>{4, 4, 1});
+	//Using example from Andrej's youtube video
 	
+		
 	std::vector<std::vector<float>> xs = { {2.0f, 3.0f, -1.0f},
 											{3.0f, -1.0f, 0.5f},
 											{0.5f, 1.0f, 1.0f},
 											{1.0f, 1.0f, -1.0f} };
 
 	std::vector<float> ys = { 1.0f, -1.0f, -1.0f, 1.0f };
+	
+
+
+	
 	std::vector<Value*> ypred;
-	for (auto& x : xs) {
-		ypred.push_back(nn.forward(x)[0]);//Only one input for this case
-	}
+	std::vector<float> end;
+	int max = 10000;
+	
+	float iters = 10;
+	//create iters many networks and find the lowest cost each can get to with a max of 10000 learning iterations
+	//networks easily get stuck in local minimas when weights are initialised randomly
+	//lowest cost I've seen is 0.0005
+	//I think there is an issue with memory leaks even when the deconstructor for each network frees the heap memory
+	//This is likely due to intermediate Values which were created along the way but somehow got disconnected(?)
 
-	for (auto& x : ypred) {
-		std::cout << x->data << std::endl;
-	}
+	
+	for (int j = 0; j < iters; j++) {
+		MLP nn(3, std::vector<float>{4, 4, 1});
 
-	Value* cost = loss(ys, ypred);
-	std::cout << "Cost: " << cost->data << std::endl;
+		int curr = 0;
+		Value* cost = nullptr;
+		for (int i = 0; i < 50; i++) {
+			ypred.erase(ypred.begin(), ypred.end());
 
-	cost->backward();
-	std::cout << nn.layers[0].neurons[0].w[0]->grad << std::endl;
+			for (auto& x : xs) {
+				ypred.push_back(nn.forward(x)[0]);//Only one input for this case
 
-	for (int i = 0; i < 100; i++) {
+			}
+			cost = loss(ys, ypred);
 
-		for (auto& p : nn.parameters()) {
-			p->data += -0.01f * p->grad;
+			for (auto& x : nn.parameters()) {
+				x->grad = 0.0f;
+			}
+
+			cost->backward();
+
+			for (auto& p : nn.parameters()) {
+				p->data += -0.05f * p->grad;
+			}
+
+			curr++;
+			if (cost->data <= 1.0f && curr < max - 50)i = 0;
 		}
-
-		std::vector<Value*> npred;
-		for (auto& x : xs) {
-			npred.push_back(nn.forward(x)[0]);//Only one input for this case
-		}
-
-		//Do this stuff next i dont want Values to be written without updating because memory and efficiency and deviation from code
+		end.push_back(cost->data);
+		std::cout << "Ended on " << cost->data << std::endl;
 	}
+
+	float lowest = end[0];
+
+	for (int i = 1; i < end.size(); i++) {
+		if (lowest >= end[i]) {
+			lowest = end[i];
+		}
+	}
+
+	std::cout << "Best cost out of " << iters << " is: " << lowest << std::endl;
+
+
+
 
 	return 0;
 }

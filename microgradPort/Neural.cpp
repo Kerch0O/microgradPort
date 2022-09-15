@@ -99,3 +99,20 @@ std::vector<Value*> MLP::parameters() {
 	return r;
 }
 
+MLP::~MLP(){
+	//This deconstructor is only for my implementation of C++
+	//Since I use heap memory, I have to free the memory
+	//It would be clunky to use unique pointers due to the disgusting syntax similar to std::pair the devil
+	//std::make_pair<Fuck, Off> (Please);
+
+	std::cout << "Deconstructed Network" << std::endl;
+	for (auto & x : parameters()) {
+		del(x->prev.first);
+		del(x->prev.second);
+		del(x->out);
+		delete(x);
+		//thorough :):)
+	}
+
+	//For some reason i feel as if this is doing nothing 
+}

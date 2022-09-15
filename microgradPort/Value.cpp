@@ -12,7 +12,6 @@ void Value::_backward() {
 
 		switch (out->type) {
 		case '+':
-		//	std::cout << "Went through with " << grad << " " << out->grad << std::endl;
 			grad += out->grad;
 			break;
 		case '*':
@@ -45,17 +44,6 @@ void Value::backward() {
 	grad = 1;
 
 	for (int i = topo.size() - 2; i >= 0; i--) {
-	//	std::cout << "-----------------------------" << std::endl;
 		topo[i]->_backward();
-	//	std::cout << "Grad for " << i << ": " << topo[i]->grad << std::endl;
-	//	std::cout << "This type: " << topo[i]->type << " This data: " << topo[i]->data << std::endl;
-		if (topo[i]->out != nullptr) {
-		//	std::cout << "Out type: " << topo[i]->out->type << std::endl;
-		//	std::cout << "g: " << topo[i]->out->grad << " " << "d: " << topo[i]->out->data << std::endl;
-		}
-		else {
-	//		std::cout << "Null out" << std::endl;
-		}
-	//	std::cout << "------------------------------" << std::endl;
 	}
 }
